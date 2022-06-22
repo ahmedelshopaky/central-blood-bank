@@ -28,6 +28,9 @@ const isNationalIdExists: CustomValidator = (value) => {
 export const DonorValidation = [
   // nationalId validation
   body('nationalId')
+    .not()
+    .isEmpty()
+    .withMessage('This field is required.')
     .matches(
       /(2|3)[0-9][1-9][0-1][1-9][0-3][1-9](01|02|03|04|11|12|13|14|15|16|17|18|19|21|22|23|24|25|26|27|28|29|31|32|33|34|35|88)\d\d\d\d\d/,
       'i'
@@ -36,18 +39,35 @@ export const DonorValidation = [
     .custom(isNationalIdExists),
   // name validation
   body('name')
+    .not()
+    .isEmpty()
+    .withMessage('This field is required.')
     .isAlpha('en-US', { ignore: ' ' })
     .withMessage('Name must be alphabets only.')
     .isLength({ max: 50 })
     .withMessage('Name must be 50 letters max.'),
   // city validation
   body('city')
+    .not()
+    .isEmpty()
+    .withMessage('This field is required.')
     .isAlpha('en-US', { ignore: ' ' })
     .withMessage('City must be alphabets only.')
     .isLength({ max: 50 })
     .withMessage('City must be 50 letters max.'),
   // email validation
-  body('email').isEmail().withMessage('Invalid email.').custom(isEmailExists),
+  body('email')
+    .not()
+    .isEmpty()
+    .withMessage('This field is required.')
+    .isEmail()
+    .withMessage('Invalid email.')
+    .custom(isEmailExists),
   // lastDonation validation
-  body('lastDonation').isDate().withMessage('Invalid donation date.'),
+  body('lastDonation')
+    .not()
+    .isEmpty()
+    .withMessage('This field is required.')
+    .isDate()
+    .withMessage('Invalid donation date.'),
 ];

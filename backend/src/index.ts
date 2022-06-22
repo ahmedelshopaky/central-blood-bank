@@ -1,6 +1,7 @@
 import express, { NextFunction, ErrorRequestHandler } from 'express';
 import bodyParser from 'body-parser';
 import DonorRouter from './controllers/DonorController';
+import BloodStockRouter from './controllers/BloodStockController';
 
 const app = express();
 const HOST = 'localhost';
@@ -18,6 +19,7 @@ app.get('/', (req: express.Request, res: express.Response): void => {
 });
 
 app.use(DonorRouter);
+app.use(BloodStockRouter);
 
 // Not Found MW
 app.use((req: express.Request, res: express.Response): void => {

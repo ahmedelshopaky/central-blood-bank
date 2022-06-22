@@ -5,7 +5,7 @@ import { DonorValidation } from '../validations/DonorValidation';
 
 const DonorRouter = express.Router();
 
-export const create = async (
+const create = async (
   req: express.Request,
   res: express.Response,
   next: NextFunction
