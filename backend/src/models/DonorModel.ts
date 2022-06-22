@@ -14,7 +14,7 @@ export class DonorModel {
     try {
       const conn = await client.connect();
       const sql =
-        'INSERT INTO donors (nationalid, name, city, email, lastdonation) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        'INSERT INTO donors (national_id, name, city, email, last_donation) VALUES ($1, $2, $3, $4, $5) RETURNING *';
       const result = await conn.query(sql, [
         donor.nationalId,
         donor.name,
@@ -26,7 +26,7 @@ export class DonorModel {
       return result.rows[0];
     } catch (error) {
       console.log(error + '');
-      throw new Error('Cannot create this donor');
+      throw new Error('cannot create this donor');
     }
   };
 }

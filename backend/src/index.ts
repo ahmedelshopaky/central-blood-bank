@@ -23,8 +23,8 @@ app.use(DonorRouter);
 app.use((req: express.Request, res: express.Response): void => {
   res.status(404).json({
     Data: 'Not found',
-    Message: 'string',
-    Success: true,
+    Message: 'invalid route',
+    Success: false,
   });
 });
 
@@ -40,7 +40,7 @@ app.use(
     console.log(err + '');
     res.status(500).json({
       Data: 'Something broke',
-      Message: 'string',
+      Message: 'internal server error',
       Success: false,
     });
   }
