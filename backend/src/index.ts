@@ -2,6 +2,8 @@ import express, { NextFunction, ErrorRequestHandler } from 'express';
 import bodyParser from 'body-parser';
 import DonorRouter from './controllers/DonorController';
 import BloodStockRouter from './controllers/BloodStockController';
+import HospitalRouter from './controllers/HospitalController';
+import RequestRouter from './controllers/RequestController';
 
 const app = express();
 const HOST = 'localhost';
@@ -20,6 +22,8 @@ app.get('/', (req: express.Request, res: express.Response): void => {
 
 app.use(DonorRouter);
 app.use(BloodStockRouter);
+app.use(HospitalRouter);
+app.use(RequestRouter);
 
 // Not Found MW
 app.use((req: express.Request, res: express.Response): void => {

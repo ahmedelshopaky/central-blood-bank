@@ -1,6 +1,6 @@
 import client from '../database';
 
-export type DonorType = {
+export type Donor = {
   id?: number; // PK
   nationalId: string;
   name: string;
@@ -10,7 +10,7 @@ export type DonorType = {
 };
 
 export class DonorModel {
-  static create = async (donor: DonorType): Promise<DonorType> => {
+  static create = async (donor: Donor): Promise<Donor> => {
     try {
       const conn = await client.connect();
       const sql =
@@ -30,7 +30,7 @@ export class DonorModel {
     }
   };
 
-  static show = async (donorId: number): Promise<DonorType> => {
+  static get = async (donorId: number): Promise<Donor> => {
     try {
       const conn = await client.connect();
       const sql = 'SELECT * FROM donors WHERE id=($1)';
@@ -43,10 +43,10 @@ export class DonorModel {
     }
   };
 
-  static update = async (
+  static updateLastDonation = async (
     donorId: number,
     lastDonation: Date
-  ): Promise<DonorType> => {
+  ): Promise<Donor> => {
     try {
       const conn = await client.connect();
       const sql =
@@ -56,7 +56,7 @@ export class DonorModel {
       return result.rows[0];
     } catch (error) {
       console.log(error + '');
-      throw new Error('cannot get this donor');
+      throw new Error('cannot update this donor');
     }
   };
 }

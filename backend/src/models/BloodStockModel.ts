@@ -1,6 +1,6 @@
 import client from '../database';
 
-enum BloodType {
+export enum BloodType {
   'A+',
   'A-',
   'B+',
@@ -11,26 +11,26 @@ enum BloodType {
   'AB-',
 }
 
-export type BloodStockType = {
+export type BloodStock = {
   id?: number; // PK
   donorId: number; // FK
-  date: Date;
+  expirationDate: Date;
   bloodType: BloodType;
   bankCity: string;
 };
 
 export class BloodStockModel {
   static create = async (
-    bloodStockInstance: BloodStockType
-  ): Promise<BloodStockType> => {
+    bloodStockInstance: BloodStock
+  ): Promise<BloodStock> => {
     try {
       const conn = await client.connect();
       const sql =
-        'INSERT INTO blood_stock (blood_type, bank_city, date, donor_id) VALUES ($1, $2, $3, $4) RETURNING *';
+        'INSERT INTO blood_stock (blood_type, bank_city, expiration_date, donor_id) VALUES ($1, $2, $3, $4) RETURNING *';
       const result = await conn.query(sql, [
         bloodStockInstance.bloodType,
         bloodStockInstance.bankCity,
-        bloodStockInstance.date,
+        bloodStockInstance.expirationDate,
         bloodStockInstance.donorId,
       ]);
       conn.release();

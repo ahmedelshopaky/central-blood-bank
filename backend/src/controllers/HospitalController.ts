@@ -1,9 +1,9 @@
 import express, { NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { DonorModel, Donor } from '../models/DonorModel';
-import { DonorValidation } from './validations/DonorValidation';
+import { HospitalModel, Hospital } from '../models/HospitalModel';
+import { HospitalValidation } from './validations/HospitalValidation';
 
-const DonorRouter = express.Router();
+const HospitalRouter = express.Router();
 
 const create = async (
   req: express.Request,
@@ -21,16 +21,13 @@ const create = async (
       return;
     }
 
-    const donor: Donor = {
-      nationalId: req.body.nationalId,
+    const hospital: Hospital = {
       name: req.body.name,
       city: req.body.city,
-      email: req.body.email,
-      lastDonation: req.body.lastDonation,
     };
-    const newDonor = await DonorModel.create(donor);
+    const newHospital = await HospitalModel.create(hospital);
     res.status(201).json({
-      Data: newDonor,
+      Data: newHospital,
       Message: 'object',
       Success: true,
     });
@@ -39,5 +36,5 @@ const create = async (
   }
 };
 
-DonorRouter.post('/donors', DonorValidation, create);
-export default DonorRouter;
+HospitalRouter.post('/hospitals', HospitalValidation, create);
+export default HospitalRouter;
