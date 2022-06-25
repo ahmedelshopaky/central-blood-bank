@@ -1,5 +1,6 @@
 import express, { NextFunction, ErrorRequestHandler } from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import DonorRouter from './controllers/DonorController';
 import BloodStockRouter from './controllers/BloodStockController';
 import HospitalRouter from './controllers/HospitalController';
@@ -19,6 +20,25 @@ app.get('/', (req: express.Request, res: express.Response): void => {
     Success: true,
   });
 });
+
+app.use(
+  cors({
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+      'X-Access-Token',
+      'Authorization',
+      'Access-Control-Allow-Origin',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods',
+    ],
+    methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
+    preflightContinue: true,
+    origin: '*',
+  })
+);
 
 app.use(DonorRouter);
 app.use(BloodStockRouter);

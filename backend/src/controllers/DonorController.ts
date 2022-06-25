@@ -39,5 +39,5 @@ const create = async (
   }
 };
 
-DonorRouter.post('/donors', DonorValidation, create);
+DonorRouter.post('/register', DonorValidation, create);
 export default DonorRouter;
