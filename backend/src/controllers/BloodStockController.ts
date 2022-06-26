@@ -8,6 +8,7 @@ import { DonorModel } from '../models/DonorModel';
 
 const BloodStockRouter = express.Router();
 
+const MONTH = 1000 * 60 * 60 * 24 * 30;
 enum Test {
   'POSITIVE' = 'positive',
   'NEGATIVE' = 'negative',
@@ -42,7 +43,7 @@ const sendEmail = (subject: string, text: string, donorEmail: string) => {
 const isAccepted = (bloodVirusTest: Test, lastDonation: Date): string[] => {
   const rejectionReasons: string[] = [];
   const differenceInMonths =
-    (new Date().valueOf() - new Date(lastDonation).valueOf()) / 2592000000;
+    (new Date().valueOf() - new Date(lastDonation).valueOf()) / MONTH;
   if (bloodVirusTest !== Test.NEGATIVE) {
     rejectionReasons.push('The blood virus test must be negative');
   }
@@ -67,7 +68,7 @@ const create = async (
     const errors = validationResult(req);
     if (errors.isEmpty()) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const donor: any = await DonorModel.get(req.body.donorId);
+      const donor: any = await DonorModel.get(req.body.donorNationalId);
       // check if donation isAccepted
       const rejectionReasons = isAccepted(
         req.body.bloodVirusTest,
@@ -92,13 +93,13 @@ const create = async (
         });
       } else {
         const expirationDate = new Date();
-        expirationDate.setDate(expirationDate.getDate() + 45);
+        expirationDate.setDate(expirationDate.getDate() + 45); // 45 days from now
 
         const bloodStockInstance: BloodStock = {
           bloodType: req.body.bloodType,
-          bankCity: req.body.bankCity,
+          bloodBankId: req.body.bloodBankId,
           expirationDate: expirationDate,
-          donorId: req.body.donorId,
+          donorNationalId: req.body.donorNationalId,
         };
 
         // create a new blood stock instance
@@ -107,7 +108,7 @@ const create = async (
         );
 
         // update last donation date
-        DonorModel.updateLastDonation(req.body.donorId, new Date());
+        DonorModel.update(req.body.donorNationalId, new Date());
 
         // send acceptance email
         // sendEmail(

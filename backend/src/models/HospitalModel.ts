@@ -20,4 +20,17 @@ export class HospitalModel {
       throw new Error('cannot create this hospital');
     }
   };
+
+  static getAll = async (): Promise<Hospital[]> => {
+    try {
+      const conn = await client.connect();
+      const sql = 'SELECT * FROM hospitals';
+      const result = await conn.query(sql);
+      conn.release();
+      return result.rows;
+    } catch (error) {
+      console.log(error + '');
+      throw new Error('cannot get all hospitals');
+    }
+  };
 }

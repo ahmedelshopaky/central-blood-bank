@@ -1,31 +1,64 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "./../network/axios";
+// import { useNavigate } from "react-router-dom";
+import axiosInstance from "./../../network/axios";
+
+const emailRegExp = /(.+)@(.+){2,}\.(.+){2,}/;
+export const nameRegExp = /^[a-zA-Z ]+$/;
+export const nationalIdRegExp =
+  /(2|3)[0-9][1-9][0-1][1-9][0-3][1-9](01|02|03|04|11|12|13|14|15|16|17|18|19|21|22|23|24|25|26|27|28|29|31|32|33|34|35|88)\d\d\d\d\d/;
+const dateRegExp = /^\d{4}[/-](0?[1-9]|1[012])[/-](0?[1-9]|[12][0-9]|3[01])$/;
 
 export default function Register() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const emailRegExp = /(.+)@(.+){2,}\.(.+){2,}/;
-  const nameRegExp = /^[a-zA-Z ]+$/;
-  const nationalIdRegExp =
-    /(2|3)[0-9][1-9][0-1][1-9][0-3][1-9](01|02|03|04|11|12|13|14|15|16|17|18|19|21|22|23|24|25|26|27|28|29|31|32|33|34|35|88)\d\d\d\d\d/;
-  const dateRegExp = /^\d{4}[/-](0?[1-9]|1[012])[/-](0?[1-9]|[12][0-9]|3[01])$/;
-
+  const [donatedBerfore, setDonatedBerfore] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [form, setForm] = useState({
     name: "",
     nationalId: "",
     email: "",
     city: "",
-    lastDonation: "",
+    // lastDonation: null,
   });
   const [errors, setErrors] = useState({
     name: "This field is required",
     nationalId: "This field is required",
     email: "This field is required",
     city: "This field is required",
-    lastDonation: "This field is required",
+    // lastDonation: null,
   });
+
+  useEffect(() => {
+    const errArr = [];
+    Object.values(errors).forEach((err) => {
+      if (err !== null) {
+        errArr.push(err);
+      }
+    });
+    if (errArr.length > 0) {
+      setIsValid(false);
+    } else {
+      setIsValid(true);
+    }
+  }, [errors]);
+
+  const sendRequest = () => {
+    axiosInstance
+      .post("register", form)
+      .then((response) => {
+        // navigate("/");
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (isValid) {
+      sendRequest();
+    }
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -82,6 +115,26 @@ export default function Register() {
         });
         break;
 
+      case "checkbox":
+        setDonatedBerfore(!donatedBerfore);
+        if (!donatedBerfore) {
+          setErrors({
+            ...errors,
+            lastDonation: "This field is required",
+          });
+        } else {
+          // TODO
+          // setForm({
+          //   ...form,
+          //   lastDonation: null,
+          // });
+          // setErrors({
+          //   ...errors,
+          //   lastDonation: null,
+          // });
+        }
+        break;
+
       case "lastDonation":
         setErrors({
           ...errors,
@@ -97,36 +150,13 @@ export default function Register() {
       default:
         break;
     }
-  };
-
-  useEffect(() => {
-    Object.values(errors).forEach((err) => {
-      if (err !== null) {
-        setIsValid(false);
-      } else {
-        setIsValid(true);
-      }
-    });
-  }, [errors]);
-
-  const sendRequest = () => {
-    axiosInstance
-      .post("register", form)
-      .then((response) => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
-  };
-
-  const handleClick = (e) => {
-    e.preventDefault();
-    sendRequest();
-  };
+  }; // end handleChange
 
   return (
     <div className="card w-75 mx-auto shadow p-5 mt-5">
+      <div className="text-center mb-5">
+        <h1>Register</h1>
+      </div>
       <div>
         <div className="form-group input-group mb-4">
           <div className="form-group input-group mb-4">
@@ -184,7 +214,20 @@ export default function Register() {
             type="text"
           />
         </div>
-        <div className="form-group input-group mb-4">
+        <div className="form-group input-group mb-2">
+          <input
+            name="checkbox"
+            className="form-check-input mx-1"
+            type="checkbox"
+            value=""
+            id="flexCheckDefault"
+            onChange={handleChange}
+          />
+          <label className="form-check-label mx-1" htmlFor="flexCheckDefault">
+            Have you donated before?
+          </label>
+        </div>
+        <div className="form-group input-group mb-4" hidden={!donatedBerfore}>
           <div className="input-group-prepend w-25">
             <span className="input-group-text">
               <span className="m-auto">Last Donation</span>
@@ -196,6 +239,7 @@ export default function Register() {
             className="form-control"
             placeholder="Last Donation"
             type="date"
+            // disabled={!donatedBerfore}
           />
         </div>
       </div>

@@ -1,2 +1,0 @@
-DROP TABLE blood_stock;
-DROP TYPE BLOOD;

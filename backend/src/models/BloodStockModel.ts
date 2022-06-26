@@ -13,10 +13,10 @@ export enum BloodType {
 
 export type BloodStock = {
   id?: number; // PK
-  donorId: number; // FK
+  donorNationalId: string; // FK
   expirationDate: Date;
   bloodType: BloodType;
-  bankCity: string;
+  bloodBankId: number; // FK
 };
 
 export class BloodStockModel {
@@ -26,12 +26,12 @@ export class BloodStockModel {
     try {
       const conn = await client.connect();
       const sql =
-        'INSERT INTO blood_stock (blood_type, bank_city, expiration_date, donor_id) VALUES ($1, $2, $3, $4) RETURNING *';
+        'INSERT INTO blood_stocks (blood_type, blood_bank_id, expiration_date, donor_national_id) VALUES ($1, $2, $3, $4) RETURNING *';
       const result = await conn.query(sql, [
         bloodStockInstance.bloodType,
-        bloodStockInstance.bankCity,
+        bloodStockInstance.bloodBankId,
         bloodStockInstance.expirationDate,
-        bloodStockInstance.donorId,
+        bloodStockInstance.donorNationalId,
       ]);
       conn.release();
       return result.rows[0];

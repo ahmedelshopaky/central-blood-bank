@@ -47,5 +47,8 @@ export const DonorValidation = [
   // email validation
   body('email').isEmail().withMessage('Invalid email.').custom(isEmailExists),
   // lastDonation validation
-  body('lastDonation').isDate().withMessage('Invalid donation date.'),
+  body('lastDonation')
+    .optional()
+    .isDate()
+    .withMessage('Invalid donation date.'),
 ];

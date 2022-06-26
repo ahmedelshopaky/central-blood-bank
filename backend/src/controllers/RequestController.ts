@@ -1,12 +1,12 @@
 import express, { NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { RequestModel, Request } from '../models/RequestModel';
+import { RequestModel, Request, RequestStatus } from '../models/RequestModel';
 import { RequestValidation } from './validations/RequestValidation';
 import client from '../database';
 
 const RequestRouter = express.Router();
 
-const getRequestsNumber = async () => {
+const getPendingRequestsNumber = async () => {
   const conn = await client.connect();
   const sql = `SELECT COUNT(*) FROM requests WHERE request_status='pending'`;
   const result = await conn.query(sql);
@@ -20,8 +20,6 @@ const create = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const requestsNumber = await getRequestsNumber();
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({
@@ -34,11 +32,11 @@ const create = async (
 
     const request: Request = {
       patientStatus: req.body.patientStatus,
-      requestStatus: req.body.requestStatus,
+      requestStatus: RequestStatus.PENDING,
       bloodType: req.body.bloodType,
       quantity: req.body.quantity,
       hospitalId: req.body.hospitalId,
-      bloodStockId: req.body.bloodStockId,
+      // bloodStockId: req.body.bloodStockId,
     };
     const newRequest = await RequestModel.create(request);
     res.status(201).json({
@@ -46,6 +44,16 @@ const create = async (
       Message: 'object',
       Success: true,
     });
+    const requestsNumber = await getPendingRequestsNumber();
+    if (requestsNumber > 10) {
+      const conn = await client.connect();
+      const sql = `SELECT * FROM requests WHERE request_status='pending' LIMIT 1`;
+      const result = await conn.query(sql);
+      conn.release();
+      const request = result.rows[0];
+      const newRequestStatus = RequestStatus.APPROVED;
+      await RequestModel.update(request.id, newRequestStatus);
+    }
   } catch (error) {
     next(error);
   }

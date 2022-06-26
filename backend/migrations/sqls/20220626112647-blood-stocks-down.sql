@@ -1,0 +1,2 @@
+DROP TABLE blood_stocks;
+DROP TYPE BLOOD;

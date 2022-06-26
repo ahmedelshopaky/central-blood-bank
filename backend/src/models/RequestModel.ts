@@ -6,7 +6,7 @@ enum PatientStatus {
   'URGENT' = 'urgent',
   'NORMAL' = 'normal',
 }
-enum RequestStatus {
+export enum RequestStatus {
   'PENDING' = 'pending',
   'APPROVED' = 'approved',
   'REJECTED' = 'rejected',
@@ -15,11 +15,11 @@ enum RequestStatus {
 export type Request = {
   id?: number; // PK
   patientStatus: PatientStatus;
-  requestStatus: RequestStatus;
+  requestStatus?: RequestStatus;
   bloodType: BloodType;
   quantity: number;
   hospitalId: number; // FK
-  bloodStockId: number; // FK
+  bloodStockId?: number; // FK
 };
 
 export class RequestModel {
@@ -41,6 +41,23 @@ export class RequestModel {
     } catch (error) {
       console.log(error + '');
       throw new Error('cannot create this request');
+    }
+  };
+
+  static update = async (
+    id: number,
+    requestStatus: RequestStatus
+  ): Promise<Request> => {
+    try {
+      const conn = await client.connect();
+      const sql =
+        'UPDATE requests SET request_status=$1 WHERE id=$2 RETURNING *';
+      const result = await conn.query(sql, [requestStatus, id]);
+      conn.release();
+      return result.rows[0];
+    } catch (error) {
+      console.log(error + '');
+      throw new Error('cannot update this request');
     }
   };
 }

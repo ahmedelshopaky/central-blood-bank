@@ -5,6 +5,7 @@ import DonorRouter from './controllers/DonorController';
 import BloodStockRouter from './controllers/BloodStockController';
 import HospitalRouter from './controllers/HospitalController';
 import RequestRouter from './controllers/RequestController';
+import BloodBankRouter from './controllers/BloodBankController';
 
 const app = express();
 const HOST = 'localhost';
@@ -44,6 +45,7 @@ app.use(DonorRouter);
 app.use(BloodStockRouter);
 app.use(HospitalRouter);
 app.use(RequestRouter);
+app.use(BloodBankRouter);
 
 // Not Found MW
 app.use((req: express.Request, res: express.Response): void => {
