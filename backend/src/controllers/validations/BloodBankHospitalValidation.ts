@@ -2,13 +2,15 @@ import { body, CustomValidator } from 'express-validator';
 import { getRow } from './DonorValidation';
 
 const isNameExists: CustomValidator = async (value) => {
-  const row = await getRow('hospitals', 'name', value);
-  if (row) {
-    return Promise.reject('Hospital name already in use');
+  if (
+    (await getRow('hospitals', 'name', value)) ||
+    (await getRow('blood_banks', 'name', value))
+  ) {
+    return Promise.reject('Name already in use');
   }
 };
 
-export const HospitalValidation = [
+export const BloodBankHospitalValidation = [
   // name validation
   body('name')
     .isAlpha('en-US', { ignore: ' ' })
@@ -22,4 +24,8 @@ export const HospitalValidation = [
     .withMessage('City must be alphabets only.')
     .isLength({ max: 50 })
     .withMessage('City must be 50 letters max.'),
+  // latitude validation
+  body('latitude').isNumeric().withMessage('Latitude must be numeric.'),
+  // longitude validation
+  body('longitude').isNumeric().withMessage('Longitude must be numeric.'),
 ];

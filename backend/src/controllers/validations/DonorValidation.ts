@@ -1,4 +1,4 @@
-import { body, CustomValidator } from 'express-validator';
+import { body, CustomValidator, param } from 'express-validator';
 import client from '../../database';
 
 export const getRow = async (table: string, metadata: string, data: string) => {
@@ -23,11 +23,20 @@ const isNationalIdExists: CustomValidator = async (value) => {
   }
 };
 
+export const NationalIdValidation = [
+  param('nationalId')
+    .matches(
+      /^([1-9]{1})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})[0-9]{3}([0-9]{1})[0-9]{1}$/,
+      'i'
+    )
+    .withMessage('Invalid national id.'),
+];
+
 export const DonorValidation = [
   // nationalId validation
   body('nationalId')
     .matches(
-      /(2|3)[0-9][1-9][0-1][1-9][0-3][1-9](01|02|03|04|11|12|13|14|15|16|17|18|19|21|22|23|24|25|26|27|28|29|31|32|33|34|35|88)\d\d\d\d\d/,
+      /^([1-9]{1})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})[0-9]{3}([0-9]{1})[0-9]{1}$/,
       'i'
     )
     .withMessage('Invalid national id.')
@@ -40,6 +49,7 @@ export const DonorValidation = [
     .withMessage('Name must be 50 letters max.'),
   // city validation
   body('city')
+    .optional()
     .isAlpha('en-US', { ignore: ' ' })
     .withMessage('City must be alphabets only.')
     .isLength({ max: 50 })
@@ -51,4 +61,8 @@ export const DonorValidation = [
     .optional()
     .isDate()
     .withMessage('Invalid donation date.'),
+  // bloodType validation
+  body('bloodType')
+    .isIn(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
+    .withMessage('Invalid blood type value'),
 ];

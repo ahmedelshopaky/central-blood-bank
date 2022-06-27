@@ -1,1 +1,2 @@
 DROP TABLE donors;
+DROP TYPE BLOOD;

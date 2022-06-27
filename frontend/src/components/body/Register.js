@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import axiosInstance from "./../../network/axios";
+import { bloodTypes } from "./Donate";
 
-const emailRegExp = /(.+)@(.+){2,}\.(.+){2,}/;
+export const emailRegExp = /(.+)@(.+){2,}\.(.+){2,}/;
 export const nameRegExp = /^[a-zA-Z ]+$/;
 export const nationalIdRegExp =
-  /(2|3)[0-9][1-9][0-1][1-9][0-3][1-9](01|02|03|04|11|12|13|14|15|16|17|18|19|21|22|23|24|25|26|27|28|29|31|32|33|34|35|88)\d\d\d\d\d/;
+  /^([1-9]{1})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})[0-9]{3}([0-9]{1})[0-9]{1}$/;
 const dateRegExp = /^\d{4}[/-](0?[1-9]|1[012])[/-](0?[1-9]|[12][0-9]|3[01])$/;
 
 export default function Register() {
@@ -19,6 +20,7 @@ export default function Register() {
     email: "",
     city: "",
     // lastDonation: null,
+    bloodType: "",
   });
   const [errors, setErrors] = useState({
     name: "This field is required",
@@ -26,6 +28,7 @@ export default function Register() {
     email: "This field is required",
     city: "This field is required",
     // lastDonation: null,
+    bloodType: "",
   });
 
   useEffect(() => {
@@ -49,7 +52,7 @@ export default function Register() {
         // navigate("/");
       })
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error);
       });
   };
 
@@ -122,17 +125,19 @@ export default function Register() {
             ...errors,
             lastDonation: "This field is required",
           });
-        } else {
-          // TODO
-          // setForm({
-          //   ...form,
-          //   lastDonation: null,
-          // });
-          // setErrors({
-          //   ...errors,
-          //   lastDonation: null,
-          // });
         }
+        break;
+
+      case "bloodType":
+        setErrors({
+          ...errors,
+          bloodType:
+            e.target.value.length === 0
+              ? "This field is required"
+              : parseInt(e.target.value) === -1
+              ? "Invalid blood type"
+              : null,
+        });
         break;
 
       case "lastDonation":
@@ -159,20 +164,6 @@ export default function Register() {
       </div>
       <div>
         <div className="form-group input-group mb-4">
-          <div className="form-group input-group mb-4">
-            <div className="input-group-prepend w-25">
-              <span className="input-group-text">
-                <i className="fa fa-user p-1 m-auto"></i>
-              </span>
-            </div>
-            <input
-              onChange={handleChange}
-              name="name"
-              className="form-control"
-              placeholder="Name"
-              type="text"
-            />
-          </div>
           <div className="input-group-prepend w-25">
             <span className="input-group-text">
               <i className="fa fa-solid fa-id-badge p-1 m-auto"></i>
@@ -184,6 +175,20 @@ export default function Register() {
             className="form-control"
             placeholder="National ID"
             type="number"
+          />
+        </div>
+        <div className="form-group input-group mb-4">
+          <div className="input-group-prepend w-25">
+            <span className="input-group-text">
+              <i className="fa fa-user p-1 m-auto"></i>
+            </span>
+          </div>
+          <input
+            onChange={handleChange}
+            name="name"
+            className="form-control"
+            placeholder="Name"
+            type="text"
           />
         </div>
         <div className="form-group input-group mb-4">
@@ -214,7 +219,29 @@ export default function Register() {
             type="text"
           />
         </div>
-        <div className="form-group input-group mb-2">
+        <div className="form-group input-group mb-4">
+          <div className="input-group-prepend w-25">
+            <span className="input-group-text">
+              <i className="fa fa-syringe p-1 m-auto"></i>
+            </span>
+          </div>
+          <select
+            value={form.bloodType}
+            onChange={handleChange}
+            className="form-select"
+            name="bloodType"
+          >
+            <option value="-1">Blood Type</option>
+            {bloodTypes.map((bloodType) => {
+              return (
+                <option value={bloodType} key={bloodType}>
+                  {bloodType}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+        <div className="form-group input-group mb-4">
           <input
             name="checkbox"
             className="form-check-input mx-1"

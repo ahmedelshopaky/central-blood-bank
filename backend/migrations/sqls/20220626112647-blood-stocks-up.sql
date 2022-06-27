@@ -1,5 +1,3 @@
-CREATE TYPE BLOOD AS ENUM('A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-');
-
 CREATE TABLE blood_stocks (
     blood_type BLOOD NOT NULL,
     expiration_date DATE NOT NULL,

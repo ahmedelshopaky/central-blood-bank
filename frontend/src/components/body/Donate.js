@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import axiosInstance from "./../../network/axios";
-import { nameRegExp, nationalIdRegExp } from "./Register";
+import { nameRegExp, nationalIdRegExp, emailRegExp } from "./Register";
 
+export const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 export default function Donate() {
   // const navigate = useNavigate();
 
-  const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
+  const [donor, setDonor] = useState({});
   const [bloodBanks, setBloodBanks] = useState([]);
   const [isValid, setIsValid] = useState(false);
   const [form, setForm] = useState({
     bloodType: "",
     bloodBankId: "",
     name: "",
-    donorNationalId: "",
+    nationalId: "",
+    email: "",
     bloodVirusTest: "",
   });
   const [errors, setErrors] = useState({
     bloodType: "This field is required",
     bloodBankId: "This field is required",
     name: "This field is required",
-    donorNationalId: "This field is required",
+    nationalId: "This field is required",
+    email: "This field is required",
     bloodVirusTest: "This field is required",
   });
 
@@ -49,8 +52,49 @@ export default function Donate() {
         // navigate("/");
       })
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error);
       });
+  };
+
+  const getDonorByNationalId = () => {
+    if (errors.nationalId == null) {
+      axiosInstance
+        .get(`/donor/${form.nationalId}`)
+        .then((response) => {
+          if (response.data.Data) {
+            setDonor(response.data.Data);
+            setForm({
+              ...form,
+              name: response.data.Data.name,
+              bloodType: response.data.Data.blood_type,
+              email: response.data.Data.email,
+            });
+            setErrors({
+              ...errors,
+              name: null,
+              bloodType: null,
+              email: null,
+            });
+          } else {
+            setDonor({});
+            setForm({
+              ...form,
+              name: "",
+              bloodType: "",
+              email: "",
+            });
+            setErrors({
+              ...errors,
+              name: "This field is required",
+              bloodType: "This field is required",
+              email: "This field is required",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const getBloodBaks = () => {
@@ -60,13 +104,32 @@ export default function Donate() {
         setBloodBanks(response.data.Data);
       })
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error);
+      });
+  };
+
+  const registerDonor = () => {
+    const newDonor = {
+      bloodType: form.bloodType,
+      name: form.name,
+      nationalId: form.nationalId,
+      email: form.email,
+    };
+    axiosInstance
+      .post("register", newDonor)
+      .then((response) => {
+        sendRequest();
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
   const handleClick = (e) => {
     e.preventDefault();
-    if (isValid) {
+    if (isValid && !Object.keys(donor).length) {
+      registerDonor();
+    } else {
       sendRequest();
     }
   };
@@ -88,14 +151,26 @@ export default function Donate() {
         });
         break;
 
-      case "donorNationalId":
+      case "nationalId":
         setErrors({
           ...errors,
-          donorNationalId:
+          nationalId:
             e.target.value.length === 0
               ? "This field is required"
               : !e.target.value.match(nationalIdRegExp)
               ? "Invalid national id"
+              : null,
+        });
+        break;
+
+      case "email":
+        setErrors({
+          ...errors,
+          email:
+            e.target.value.length === 0
+              ? "This field is required"
+              : !e.target.value.match(emailRegExp)
+              ? "Invalid E-mail"
               : null,
         });
         break;
@@ -148,27 +223,93 @@ export default function Donate() {
       </div>
       <div>
         <div className="form-group input-group mb-4">
-          <div className="form-group input-group mb-4">
-            <div className="input-group-prepend w-25">
-              <span className="input-group-text">
-                <i className="fa fa-syringe p-1 m-auto"></i>
-              </span>
-            </div>
-            <select
-              onChange={handleChange}
-              className="form-select"
-              name="bloodType"
-            >
-              <option value="-1">Blood Type</option>
-              {bloodTypes.map((bloodType) => {
-                return (
-                  <option value={bloodType} key={bloodType}>
-                    {bloodType}
-                  </option>
-                );
-              })}
-            </select>
+          <div className="input-group-prepend w-25">
+            <span className="input-group-text">
+              <i className="fa fa-solid fa-id-badge p-1 m-auto"></i>
+            </span>
           </div>
+          <input
+            onBlur={getDonorByNationalId}
+            onChange={handleChange}
+            name="nationalId"
+            className="form-control"
+            placeholder="Donor National ID"
+            type="number"
+          />
+        </div>
+        <div className="form-group input-group mb-4">
+          <div className="input-group-prepend w-25">
+            <span className="input-group-text">
+              <i className="fa fa-user p-1 m-auto"></i>
+            </span>
+          </div>
+          <input
+            disabled={donor.name}
+            onChange={handleChange}
+            name="name"
+            value={form.name}
+            className="form-control"
+            placeholder="Donor Name"
+            type="text"
+          />
+        </div>
+        <div className="form-group input-group mb-4">
+          <div className="input-group-prepend w-25">
+            <span className="input-group-text">
+              <i className="fa fa-solid fa-envelope p-1 m-auto"></i>
+            </span>
+          </div>
+          <input
+            disabled={donor.email}
+            value={form.email}
+            onChange={handleChange}
+            name="email"
+            className="form-control"
+            placeholder="Donor E-mail"
+            type="email"
+          />
+        </div>
+        <div className="form-group input-group mb-4">
+          <div className="input-group-prepend w-25">
+            <span className="input-group-text">
+              <i className="fa fa-syringe p-1 m-auto"></i>
+            </span>
+          </div>
+          <select
+            disabled={donor.blood_type}
+            value={form.bloodType}
+            onChange={handleChange}
+            className="form-select"
+            name="bloodType"
+          >
+            <option value="-1">Blood Type</option>
+            {bloodTypes.map((bloodType) => {
+              return (
+                <option value={bloodType} key={bloodType}>
+                  {bloodType}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+
+        <div className="form-group input-group mb-4">
+          <div className="input-group-prepend w-25">
+            <span className="input-group-text">
+              <i className="fa fa-solid fa-microscope p-1 m-auto"></i>
+            </span>
+          </div>
+          <select
+            className="form-select"
+            onChange={handleChange}
+            name="bloodVirusTest"
+          >
+            <option value="-1">Blood Virus Test</option>
+            <option value="positive">Positive (+ve)</option>
+            <option value="negative">Negative (-ve)</option>
+          </select>
+        </div>
+        <div className="form-group input-group mb-4">
           <div className="input-group-prepend w-25">
             <span className="input-group-text">
               <i className="fa fa-solid fa-hospital p-1 m-auto"></i>
@@ -187,50 +328,6 @@ export default function Donate() {
                 </option>
               );
             })}
-          </select>
-        </div>
-        <div className="form-group input-group mb-4">
-          <div className="form-group input-group mb-4">
-            <div className="input-group-prepend w-25">
-              <span className="input-group-text">
-                <i className="fa fa-user p-1 m-auto"></i>
-              </span>
-            </div>
-            <input
-              onChange={handleChange}
-              name="name"
-              className="form-control"
-              placeholder="Donor Name"
-              type="text"
-            />
-          </div>
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <i className="fa fa-solid fa-id-badge p-1 m-auto"></i>
-            </span>
-          </div>
-          <input
-            onChange={handleChange}
-            name="donorNationalId"
-            className="form-control"
-            placeholder="National ID"
-            type="number"
-          />
-        </div>
-        <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <i className="fa fa-solid fa-microscope p-1 m-auto"></i>
-            </span>
-          </div>
-          <select
-            className="form-select"
-            onChange={handleChange}
-            name="bloodVirusTest"
-          >
-            <option value="-1">Blood Virus Test</option>
-            <option value="positive">Positive (+ve)</option>
-            <option value="negative">Negative (-ve)</option>
           </select>
         </div>
       </div>

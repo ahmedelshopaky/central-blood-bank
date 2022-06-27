@@ -4,6 +4,8 @@ export type BloodBank = {
   id?: number; // PK
   name: string;
   city: string;
+  latitude: number;
+  longitude: number;
 };
 
 export class BloodBankModel {
@@ -11,8 +13,13 @@ export class BloodBankModel {
     try {
       const conn = await client.connect();
       const sql =
-        'INSERT INTO blood_banks (name, city) VALUES ($1, $2) RETURNING *';
-      const result = await conn.query(sql, [bloodBank.name, bloodBank.city]);
+        'INSERT INTO blood_banks (name, city, latitude, longitude) VALUES ($1, $2, $3, $4) RETURNING *';
+      const result = await conn.query(sql, [
+        bloodBank.name,
+        bloodBank.city,
+        bloodBank.latitude,
+        bloodBank.longitude,
+      ]);
       conn.release();
       return result.rows[0];
     } catch (error) {
