@@ -5,10 +5,6 @@ export const RequestValidation = [
   body('patientStatus')
     .isIn(['immediate', 'urgent', 'normal'])
     .withMessage('Invalid patient status value'),
-  // requestStatus validation
-  body('requestStatus')
-    .isIn(['pending', 'approved', 'rejected'])
-    .withMessage('Invalid request status value'),
   // bloodType validation
   body('bloodType')
     .isIn(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
@@ -18,6 +14,4 @@ export const RequestValidation = [
 
   // TODO hospitalId validation
   body('hospitalId').isInt().withMessage('Invalid id'),
-  // TODO bloodStockId validation
-  // body('bloodStockId').optional().isInt().withMessage('Invalid id'),
 ];

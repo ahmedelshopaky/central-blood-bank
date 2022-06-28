@@ -6,9 +6,7 @@ export const BloodStockValidation = [
     .isIn(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'])
     .withMessage('Invalid blood type value'),
   // TODO bloodBankId validation
-  // body('bloodBankId').isInt().withMessage('Invalid id'),
-  // expirationDate validation
-  // body('expirationDate').not().isDate().withMessage('Invalid date.'),
+  body('bloodBankId').isInt().withMessage('Invalid id'),
   // TODO donorNationalId validation
   body('nationalId')
     .matches(

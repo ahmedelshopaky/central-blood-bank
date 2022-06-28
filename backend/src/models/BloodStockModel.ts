@@ -40,4 +40,17 @@ export class BloodStockModel {
       throw new Error('cannot create this blood stock instance');
     }
   };
+
+  static delete = async (bloodStockId: number): Promise<BloodStock> => {
+    try {
+      const conn = await client.connect();
+      const sql = 'DELETE FROM blood_stocks WHERE id=$1 RETURNING *';
+      const result = await conn.query(sql, [bloodStockId]);
+      conn.release();
+      return result.rows[0];
+    } catch (error) {
+      console.log(error + '');
+      throw new Error('cannot delete this blood stock instance');
+    }
+  };
 }

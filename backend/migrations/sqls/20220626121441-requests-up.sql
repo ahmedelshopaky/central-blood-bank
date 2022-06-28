@@ -7,6 +7,6 @@ CREATE TABLE requests (
     blood_type BLOOD NOT NULL,
     quantity INT NOT NULL,
     request_status REQUEST_STATUS NOT NULL,
-    hospital_id INT REFERENCES hospitals(id) NOT NULL,
-    blood_stock_id INT REFERENCES blood_stocks(id)
+    hospital_id INT REFERENCES hospitals(id) ON DELETE CASCADE NOT NULL,
+    available INT DEFAULT 0
 );

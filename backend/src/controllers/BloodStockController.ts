@@ -4,11 +4,11 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { BloodStockValidation } from './validations/BloodStockValidation';
 import { BloodStockModel, BloodStock } from '../models/BloodStockModel';
-import { Donor, DonorModel } from '../models/DonorModel';
+import { DonorModel } from '../models/DonorModel';
 
 const BloodStockRouter = express.Router();
 
-const MONTH = 1000 * 60 * 60 * 24 * 30;
+const MONTH = 1000 * 60 * 60 * 24 * 30; // month in milliseconds
 enum Test {
   'POSITIVE' = 'positive',
   'NEGATIVE' = 'negative',
@@ -17,7 +17,7 @@ enum Test {
 dotenv.config();
 const { MAIL_USER, MAIL_PASSWORD, MAIL_HOST } = process.env;
 
-const sendEmail = (subject: string, text: string, donorEmail: string) => {
+const sendEmail = (subject: string, body: string, email: string) => {
   const transporter = nodemailer.createTransport({
     service: MAIL_HOST,
     auth: {
@@ -27,9 +27,9 @@ const sendEmail = (subject: string, text: string, donorEmail: string) => {
   });
   const mailOptions = {
     from: MAIL_USER,
-    to: donorEmail,
+    to: email,
     subject: subject,
-    text: text,
+    text: body,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
@@ -67,8 +67,7 @@ const create = async (
   try {
     const errors = validationResult(req);
     if (errors.isEmpty()) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const donor: any = await DonorModel.get(req.body.nationalId);
+      const donor = await DonorModel.get(req.body.nationalId);
       if (donor) {
         // check if donation isAccepted
         const rejectionReasons = isAccepted(
@@ -76,17 +75,16 @@ const create = async (
           donor['last_donation']
         );
         if (rejectionReasons.length > 0) {
-          // sendEmail(
-          //   'Donation is rejected',
-          //   `Hi ${
-          //     donor['name']
-          //   },\n\nThank you for your donation. We have carefully checked your donation and we'd like to inform you that your donation is rejected beacaue of the following reasons:\n${rejectionReasons.map(
-          //     (value, index) => {
-          //       return `\n${index + 1}. ${value}`;
-          //     }
-          //   )}.`,
-          //   donor['email']
-          // );
+          sendEmail(
+            'Donation is rejected',
+            `Hi ${donor['name']},\n\nThank you for your donation.
+We have carefully checked your donation and we'd like to inform you that your donation is rejected beacaue of the following reasons:\n${rejectionReasons.map(
+              (value, index) => {
+                return `\n${index + 1}. ${value}`;
+              }
+            )}.`,
+            donor['email']
+          );
           res.status(200).json({
             Data: rejectionReasons,
             Message: 'not accepted',
@@ -112,11 +110,12 @@ const create = async (
           DonorModel.update(req.body.nationalId);
 
           // send acceptance email
-          // sendEmail(
-          //   'Donation is accepted',
-          //   `Hi ${donor['name']},\n\nThank you for your donation. We have carefully checked your donation and we'd like to inform you that your donation is accepted.`,
-          //   donor['email']
-          // );
+          sendEmail(
+            'Donation is accepted',
+            `Hi ${donor['name']},\n\nThank you for your donation.
+We have carefully checked your donation and we'd like to inform you that your donation is accepted.`,
+            donor['email']
+          );
 
           res.status(201).json({
             Data: newBloodStockInstance,

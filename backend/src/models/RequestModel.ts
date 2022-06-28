@@ -27,14 +27,13 @@ export class RequestModel {
     try {
       const conn = await client.connect();
       const sql =
-        'INSERT INTO requests (patient_status, request_status, blood_type, quantity, hospital_id, blood_stock_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+        'INSERT INTO requests (patient_status, request_status, blood_type, quantity, hospital_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
       const result = await conn.query(sql, [
         request.patientStatus,
         request.requestStatus,
         request.bloodType,
         request.quantity,
         request.hospitalId,
-        request.bloodStockId,
       ]);
       conn.release();
       return result.rows[0];
@@ -44,7 +43,7 @@ export class RequestModel {
     }
   };
 
-  static update = async (
+  static updateRequestStatus = async (
     id: number,
     requestStatus: RequestStatus
   ): Promise<Request> => {
@@ -53,6 +52,20 @@ export class RequestModel {
       const sql =
         'UPDATE requests SET request_status=$1 WHERE id=$2 RETURNING *';
       const result = await conn.query(sql, [requestStatus, id]);
+      conn.release();
+      return result.rows[0];
+    } catch (error) {
+      console.log(error + '');
+      throw new Error('cannot update this request');
+    }
+  };
+
+  static updateAvailable = async (id: number) => {
+    try {
+      const conn = await client.connect();
+      const sql =
+        'UPDATE requests SET available = available + 1 WHERE id = $1 RETURNING *';
+      const result = await conn.query(sql, [id]);
       conn.release();
       return result.rows[0];
     } catch (error) {

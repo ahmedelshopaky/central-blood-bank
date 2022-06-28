@@ -158,7 +158,7 @@ export default function Register() {
   }; // end handleChange
 
   return (
-    <div className="card w-75 mx-auto shadow p-5 mt-5">
+    <div className="card w-75 mx-auto shadow p-5 m-5">
       <div className="text-center mb-5">
         <h1>Register</h1>
       </div>
