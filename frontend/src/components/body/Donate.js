@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "./../../network/axios";
 import { nameRegExp, nationalIdRegExp, emailRegExp } from "./Register";
 
 export const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 export default function Donate() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [donor, setDonor] = useState({});
   const [bloodBanks, setBloodBanks] = useState([]);
@@ -49,7 +49,7 @@ export default function Donate() {
     axiosInstance
       .post("donate", form)
       .then((response) => {
-        // navigate("/");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
@@ -223,7 +223,7 @@ export default function Donate() {
       </div>
       <div>
         <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
+          <div className="input-group-prepend">
             <span className="input-group-text">
               <i className="fa fa-solid fa-id-badge p-1 m-auto"></i>
             </span>
@@ -238,7 +238,7 @@ export default function Donate() {
           />
         </div>
         <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
+          <div className="input-group-prepend">
             <span className="input-group-text">
               <i className="fa fa-user p-1 m-auto"></i>
             </span>
@@ -254,7 +254,7 @@ export default function Donate() {
           />
         </div>
         <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
+          <div className="input-group-prepend">
             <span className="input-group-text">
               <i className="fa fa-solid fa-envelope p-1 m-auto"></i>
             </span>
@@ -270,7 +270,7 @@ export default function Donate() {
           />
         </div>
         <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
+          <div className="input-group-prepend">
             <span className="input-group-text">
               <i className="fa fa-syringe p-1 m-auto"></i>
             </span>
@@ -294,7 +294,7 @@ export default function Donate() {
         </div>
 
         <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
+          <div className="input-group-prepend">
             <span className="input-group-text">
               <i className="fa fa-solid fa-microscope p-1 m-auto"></i>
             </span>
@@ -310,7 +310,7 @@ export default function Donate() {
           </select>
         </div>
         <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
+          <div className="input-group-prepend">
             <span className="input-group-text">
               <i className="fa fa-solid fa-hospital p-1 m-auto"></i>
             </span>

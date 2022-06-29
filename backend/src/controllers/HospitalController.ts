@@ -58,5 +58,23 @@ const create = async (
   }
 };
 
+const getAll = async (
+  req: express.Request,
+  res: express.Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const hospitals = await HospitalModel.getAll();
+    res.status(200).json({
+      Data: hospitals,
+      Message: 'array',
+      Success: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 HospitalRouter.post('/hospitals', BloodBankHospitalValidation, create);
+HospitalRouter.get('/hospitals', getAll);
 export default HospitalRouter;

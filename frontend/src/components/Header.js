@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Header() {
   return (
-    <nav className="navbar fixed-top navbar-expand-sm navbar-light bg-light px-5 shadow-sm">
+    <nav className="navbar fixed-top navbar-expand-sm navbar-dark bg-dark px-5 shadow-sm">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           Central Blood Bank

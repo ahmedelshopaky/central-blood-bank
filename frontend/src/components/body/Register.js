@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "./../../network/axios";
 import { bloodTypes } from "./Donate";
 
@@ -10,7 +10,7 @@ export const nationalIdRegExp =
 const dateRegExp = /^\d{4}[/-](0?[1-9]|1[012])[/-](0?[1-9]|[12][0-9]|3[01])$/;
 
 export default function Register() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [donatedBerfore, setDonatedBerfore] = useState(false);
   const [isValid, setIsValid] = useState(false);
@@ -27,7 +27,13 @@ export default function Register() {
     nationalId: "This field is required",
     email: "This field is required",
     city: "This field is required",
-    // lastDonation: null,
+    bloodType: "",
+  });
+  const [errorsLabels, setErrorsLabels] = useState({
+    name: "",
+    nationalId: "",
+    email: "",
+    city: "",
     bloodType: "",
   });
 
@@ -49,11 +55,43 @@ export default function Register() {
     axiosInstance
       .post("register", form)
       .then((response) => {
-        // navigate("/");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleBlur = (e) => {
+    switch (e.target.name) {
+      case "name":
+        setErrorsLabels({ ...errorsLabels, name: errors.name });
+        break;
+      case "nationalId":
+        setErrorsLabels({
+          ...errorsLabels,
+          nationalId: errors.nationalId,
+        });
+        break;
+      case "email":
+        setErrorsLabels({ ...errorsLabels, email: errors.email });
+        break;
+      case "city":
+        setErrorsLabels({ ...errorsLabels, city: errors.city });
+        break;
+      case "bloodType":
+        setErrorsLabels({ ...errorsLabels, bloodType: errors.bloodType });
+        break;
+      case "lastDonation":
+        setErrorsLabels({
+          ...errorsLabels,
+          lastDonation: errors.lastDonation,
+        });
+        break;
+      default:
+        break;
+    }
+    console.log(errorsLabels);
   };
 
   const handleClick = (e) => {
@@ -163,84 +201,105 @@ export default function Register() {
         <h1>Register</h1>
       </div>
       <div>
-        <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <i className="fa fa-solid fa-id-badge p-1 m-auto"></i>
-            </span>
+        <div className="mb-4">
+          <div className="form-group input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">
+                <i className="fa fa-solid fa-id-badge p-1 m-auto"></i>
+              </span>
+            </div>
+            <input
+              onBlur={handleBlur}
+              onChange={handleChange}
+              name="nationalId"
+              className="form-control"
+              placeholder="National ID"
+              type="number"
+            />
           </div>
-          <input
-            onChange={handleChange}
-            name="nationalId"
-            className="form-control"
-            placeholder="National ID"
-            type="number"
-          />
+          <span className="text-danger">{errorsLabels.nationalId}</span>
         </div>
-        <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <i className="fa fa-user p-1 m-auto"></i>
-            </span>
+        <div className="mb-4">
+          <div className="form-group input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">
+                <i className="fa fa-user p-1 m-auto"></i>
+              </span>
+            </div>
+            <input
+              onChange={handleChange}
+              onBlur={handleBlur}
+              name="name"
+              className="form-control"
+              placeholder="Name"
+              type="text"
+            />
           </div>
-          <input
-            onChange={handleChange}
-            name="name"
-            className="form-control"
-            placeholder="Name"
-            type="text"
-          />
+          <span className="text-danger">{errorsLabels.name}</span>
         </div>
-        <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <i className="fa fa-solid fa-envelope p-1 m-auto"></i>
-            </span>
+        <div className="mb-4">
+          <div className="form-group input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">
+                <i className="fa fa-solid fa-envelope p-1 m-auto"></i>
+              </span>
+            </div>
+            <input
+              onChange={handleChange}
+              onBlur={handleBlur}
+              name="email"
+              className="form-control"
+              placeholder="E-mail"
+              type="email"
+            />
           </div>
-          <input
-            onChange={handleChange}
-            name="email"
-            className="form-control"
-            placeholder="E-mail"
-            type="email"
-          />
+          <span className="text-danger">{errorsLabels.email}</span>
         </div>
-        <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <i className="fa fa-solid fa-home p-1 m-auto"></i>
-            </span>
+        <div className="mb-4">
+          <div className="form-group input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">
+                <i className="fa fa-solid fa-home p-1 m-auto"></i>
+              </span>
+            </div>
+            <input
+              onChange={handleChange}
+              onBlur={handleBlur}
+              name="city"
+              className="form-control"
+              placeholder="City"
+              type="text"
+            />
           </div>
-          <input
-            onChange={handleChange}
-            name="city"
-            className="form-control"
-            placeholder="City"
-            type="text"
-          />
+          <span className="text-danger">{errorsLabels.city}</span>
         </div>
-        <div className="form-group input-group mb-4">
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <i className="fa fa-syringe p-1 m-auto"></i>
-            </span>
+        <div className="mb-4">
+          <div className="form-group input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">
+                <i className="fa fa-syringe p-1 m-auto"></i>
+              </span>
+            </div>
+            <select
+              value={form.bloodType}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className="form-select"
+              name="bloodType"
+            >
+              <option value="-1">Blood Type</option>
+              {bloodTypes.map((bloodType) => {
+                return (
+                  <option value={bloodType} key={bloodType}>
+                    {bloodType}
+                  </option>
+                );
+              })}
+            </select>
           </div>
-          <select
-            value={form.bloodType}
-            onChange={handleChange}
-            className="form-select"
-            name="bloodType"
-          >
-            <option value="-1">Blood Type</option>
-            {bloodTypes.map((bloodType) => {
-              return (
-                <option value={bloodType} key={bloodType}>
-                  {bloodType}
-                </option>
-              );
-            })}
-          </select>
+          <span className="text-danger">{errorsLabels.bloodType}</span>
         </div>
+
         <div className="form-group input-group mb-4">
           <input
             name="checkbox"
@@ -254,20 +313,24 @@ export default function Register() {
             Have you donated before?
           </label>
         </div>
-        <div className="form-group input-group mb-4" hidden={!donatedBerfore}>
-          <div className="input-group-prepend w-25">
-            <span className="input-group-text">
-              <span className="m-auto">Last Donation</span>
-            </span>
+        <div className="mb-4" hidden={!donatedBerfore}>
+          <div className="form-group input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">
+                <span className="m-auto">Last Donation</span>
+              </span>
+            </div>
+            <input
+              onChange={handleChange}
+              onBlur={handleBlur}
+              name="lastDonation"
+              className="form-control"
+              placeholder="Last Donation"
+              type="date"
+              // disabled={!donatedBerfore}
+            />
           </div>
-          <input
-            onChange={handleChange}
-            name="lastDonation"
-            className="form-control"
-            placeholder="Last Donation"
-            type="date"
-            // disabled={!donatedBerfore}
-          />
+          <span className="text-danger">{errorsLabels.lastDonation}</span>
         </div>
       </div>
       <div className="form-group text-center">
