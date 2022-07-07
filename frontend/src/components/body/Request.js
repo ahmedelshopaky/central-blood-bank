@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "./../../network/axios";
 import { bloodTypes } from "./Donate";
-import { nameRegExp } from "./Register";
 
 const patientStatus = ["normal", "urgent", "immediate"];
 export default function Request() {
@@ -46,9 +45,11 @@ export default function Request() {
     axiosInstance
       .post("request", form)
       .then((response) => {
+        alert("Request sent successfully");
         navigate("/");
       })
       .catch((error) => {
+        alert("Error sending request");
         console.log(error);
       });
   };

@@ -67,7 +67,7 @@ const create = async (
   try {
     const errors = validationResult(req);
     if (errors.isEmpty()) {
-      const donor = await DonorModel.get(req.body.nationalId);
+      const donor: any = await DonorModel.get(req.body.nationalId);
       if (donor) {
         // check if donation isAccepted
         const rejectionReasons = isAccepted(

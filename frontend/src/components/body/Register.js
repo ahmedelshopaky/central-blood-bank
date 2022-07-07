@@ -55,9 +55,11 @@ export default function Register() {
     axiosInstance
       .post("register", form)
       .then((response) => {
+        alert("Successfully registered");
         navigate("/");
       })
       .catch((error) => {
+        alert("Error registering");
         console.log(error);
       });
   };
@@ -201,7 +203,7 @@ export default function Register() {
         <h1>Register</h1>
       </div>
       <div>
-        <div className="mb-4">
+        <div>
           <div className="form-group input-group">
             <div className="input-group-prepend">
               <span className="input-group-text">
@@ -217,9 +219,9 @@ export default function Register() {
               type="number"
             />
           </div>
-          <span className="text-danger">{errorsLabels.nationalId}</span>
+          <span className="text-danger">{errorsLabels.nationalId} &nbsp;</span>
         </div>
-        <div className="mb-4">
+        <div>
           <div className="form-group input-group">
             <div className="input-group-prepend">
               <span className="input-group-text">
@@ -235,9 +237,9 @@ export default function Register() {
               type="text"
             />
           </div>
-          <span className="text-danger">{errorsLabels.name}</span>
+          <span className="text-danger">{errorsLabels.name} &nbsp;</span>
         </div>
-        <div className="mb-4">
+        <div>
           <div className="form-group input-group">
             <div className="input-group-prepend">
               <span className="input-group-text">
@@ -253,9 +255,9 @@ export default function Register() {
               type="email"
             />
           </div>
-          <span className="text-danger">{errorsLabels.email}</span>
+          <span className="text-danger">{errorsLabels.email} &nbsp;</span>
         </div>
-        <div className="mb-4">
+        <div>
           <div className="form-group input-group">
             <div className="input-group-prepend">
               <span className="input-group-text">
@@ -271,9 +273,9 @@ export default function Register() {
               type="text"
             />
           </div>
-          <span className="text-danger">{errorsLabels.city}</span>
+          <span className="text-danger">{errorsLabels.city} &nbsp;</span>
         </div>
-        <div className="mb-4">
+        <div>
           <div className="form-group input-group">
             <div className="input-group-prepend">
               <span className="input-group-text">
@@ -297,10 +299,10 @@ export default function Register() {
               })}
             </select>
           </div>
-          <span className="text-danger">{errorsLabels.bloodType}</span>
+          <span className="text-danger">{errorsLabels.bloodType} &nbsp;</span>
         </div>
 
-        <div className="form-group input-group mb-4">
+        <div className="form-group input-group mb-1">
           <input
             name="checkbox"
             className="form-check-input mx-1"
@@ -313,7 +315,7 @@ export default function Register() {
             Have you donated before?
           </label>
         </div>
-        <div className="mb-4" hidden={!donatedBerfore}>
+        <div className="mb-1" hidden={!donatedBerfore}>
           <div className="form-group input-group">
             <div className="input-group-prepend">
               <span className="input-group-text">
@@ -330,7 +332,7 @@ export default function Register() {
               // disabled={!donatedBerfore}
             />
           </div>
-          <span className="text-danger">{errorsLabels.lastDonation}</span>
+          <span className="text-danger">{errorsLabels.lastDonation} &nbsp;</span>
         </div>
       </div>
       <div className="form-group text-center">

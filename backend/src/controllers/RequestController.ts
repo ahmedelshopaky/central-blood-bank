@@ -51,8 +51,8 @@ const getAvailableShortestDistanceBloodStock = async (
 // this function get pending requests ordered by patient status then reorder them by distance
 // so i can serve hospitals requests from nearest hospitals first
 const getOrderedRequests = async () => {
-  const requests = await getPendingRequests();
-  const bloodStocks = [];
+  const requests: any = await getPendingRequests();
+  const bloodStocks: any = [];
   for (const request of requests) {
     const bloodStock = await getAvailableShortestDistanceBloodStock(
       request['blood_type'],
@@ -69,7 +69,7 @@ const getOrderedRequests = async () => {
       }
     }
   }
-  bloodStocks.sort((a, b) => a['distance'] - b['distance']);
+  bloodStocks.sort((a: any, b: any) => a['distance'] - b['distance']);
   return bloodStocks;
 };
 

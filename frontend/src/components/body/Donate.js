@@ -49,9 +49,11 @@ export default function Donate() {
     axiosInstance
       .post("donate", form)
       .then((response) => {
+        alert("Request sent successfully");
         navigate("/");
       })
       .catch((error) => {
+        alert("Error sending request");
         console.log(error);
       });
   };
